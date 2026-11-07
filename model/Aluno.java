@@ -1,4 +1,4 @@
-package SIS.model;
+package model;
 
 import java.io.Serializable;
 
@@ -17,4 +17,31 @@ public class Aluno implements Serializable {
         this.nota2 = nota2;
     }
 
+    public double getMedia() {
+        return (nota1 + nota2) / 2.0;
+    }
+
+    public String getStatus() {
+        return getMedia() >= 6.0 ? "Aprovado" : "Reprovado";
+    }
+
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getCurso() {
+        return curso;
+    }
+
+    public double getNota1() {
+        return nota1;
+    }
+
+    public double getNota2() {
+        return nota2;
+    }
 }
