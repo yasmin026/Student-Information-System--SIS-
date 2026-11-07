@@ -3,6 +3,8 @@ package model;
 import java.io.Serializable;
 
 public class Aluno implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String matricula;
     private String nome;
     private String curso;
@@ -25,6 +27,7 @@ public class Aluno implements Serializable {
         return getMedia() >= 6.0 ? "Aprovado" : "Reprovado";
     }
 
+    // Getters
     public String getMatricula() {
         return matricula;
     }
