@@ -119,4 +119,121 @@ public class TelaPrincipal extends JFrame {
         return panel;
     }
 
+    private JPanel criarPainelFormulario() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(BG_CARD);
+        panel.setPreferredSize(new Dimension(280, 0));
+        panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+
+        JLabel title = new JLabel("Cadastrar Aluno");
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setForeground(COLOR_TEXT);
+        panel.add(title, gbc);
+
+        JTextField txtMatricula = criarTextField();
+        JTextField txtNome = criarTextField();
+        JTextField txtCurso = criarTextField();
+        JTextField txtNota1 = criarTextField();
+        JTextField txtNota2 = criarTextField();
+
+        adicionarCampo(panel, "Matrícula:", txtMatricula, gbc, 1);
+        adicionarCampo(panel, "Nome:", txtNome, gbc, 3);
+        adicionarCampo(panel, "Curso:", txtCurso, gbc, 5);
+        adicionarCampo(panel, "Nota 1:", txtNota1, gbc, 7);
+        adicionarCampo(panel, "Nota 2:", txtNota2, gbc, 9);
+
+        JButton btnSalvar = new JButton("Adicionar Aluno");
+        btnSalvar.setBackground(COLOR_ACCENT);
+        btnSalvar.setForeground(Color.WHITE);
+        btnSalvar.setFont(new Font("SansSerif", Font.BOLD, 14));
+        btnSalvar.setFocusPainted(false);
+        btnSalvar.setBorderPainted(false);
+
+        gbc.gridy = 11;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(15, 5, 5, 5);
+        panel.add(btnSalvar, gbc);
+
+        btnSalvar.addActionListener(e -> {
+            try {
+                Aluno a = new Aluno(
+                        txtMatricula.getText(),
+                        txtNome.getText(),
+                        txtCurso.getText(),
+                        Double.parseDouble(txtNota1.getText()),
+                        Double.parseDouble(txtNota2.getText()));
+                adicionarAluno(a);
+                txtMatricula.setText("");
+                txtNome.setText("");
+                txtCurso.setText("");
+                txtNota1.setText("");
+                txtNota2.setText("");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Preencha as notas corretamente!", "Erro de Validação",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        return panel;
+    }
+
+    private void adicionarCampo(JPanel p, String label, JTextField txt, GridBagConstraints gbc, int y) {
+        gbc.gridy = y;
+        gbc.gridwidth = 2;
+        JLabel lbl = new JLabel(label);
+        lbl.setForeground(new Color(180, 180, 180));
+        p.add(lbl, gbc);
+
+        gbc.gridy = y + 1;
+        p.add(txt, gbc);
+    }
+
+    private JTextField criarTextField() {
+        JTextField txt = new JTextField(15);
+        txt.setBackground(BG_DARK);
+        txt.setForeground(COLOR_TEXT);
+        txt.setCaretColor(COLOR_TEXT);
+        txt.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(70, 70, 70)),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        return txt;
+    }
+
+    private void adicionarAluno(Aluno a) {
+        listaAlunos.add(a);
+        tableModel.addRow(new Object[] {
+                a.getMatricula(), a.getNome(), a.getCurso(),
+                a.getNota1(), a.getNota2(), String.format("%.2f", a.getMedia()), a.getStatus()
+        });
+        atualizarEstatisticas();
+    }
+
+    private void atualizarEstatisticas() {
+        int total = listaAlunos.size();
+        labelTotal.setText(String.valueOf(total));
+
+        if (total > 0) {
+            double somaMedias = 0;
+            int aprovados = 0;
+            for (Aluno a : listaAlunos) {
+                somaMedias += a.getMedia();
+                if (a.getMedia() >= 6.0)
+                    aprovados++;
+            }
+            labelMediaGeral.setText(String.format("%.1f", somaMedias / total));
+            labelAprovados.setText(String.format("%.0f%%", ((double) aprovados / total) * 100));
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new TelaPrincipal().setVisible(true));
+    }
+
 }
